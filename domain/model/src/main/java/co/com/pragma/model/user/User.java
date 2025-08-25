@@ -14,7 +14,7 @@ public class User {
     private String name;
     private String lastName;
     private LocalDateTime birthday;
-    private String adddress;
+    private String address;
     private Integer phone;
     private String email;
     private Integer salary;

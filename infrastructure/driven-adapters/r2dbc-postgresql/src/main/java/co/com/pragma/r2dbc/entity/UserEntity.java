@@ -1,13 +1,12 @@
 package co.com.pragma.r2dbc.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Table;
+import org.springframework.data.relational.core.mapping.Column;
 import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Entity
 @Table(name = "users")
 @AllArgsConstructor
 @NoArgsConstructor
@@ -15,13 +14,28 @@ import java.time.LocalDateTime;
 @Setter
 @Builder
 public class UserEntity {
+
     @Id
     private Long id;
+
+    @Column("name")
     private String name;
+
+    @Column("last_name")
     private String lastName;
+
+    @Column("birthday")
     private LocalDateTime birthday;
-    private String adddress;
+
+    @Column("address")
+    private String address;
+
+    @Column("phone")
     private Integer phone;
+
+    @Column("email")
     private String email;
+
+    @Column("salary")
     private Integer salary;
 }

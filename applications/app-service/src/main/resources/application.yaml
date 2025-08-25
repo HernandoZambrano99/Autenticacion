@@ -15,10 +15,10 @@ adapters:
   r2dbc:
     host: "localhost"
     port: 5432
-    database: "test"
+    database: "credi_ya"
     schema: "public"
-    username: "admin"
-    password: "admin"
+    username: "credi_user"
+    password: "user"
 management:
   endpoints:
     web:

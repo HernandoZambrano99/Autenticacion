@@ -33,4 +33,9 @@ public class UserRepositoryAdapter extends ReactiveAdapterOperations<
     public Mono<Void> deleteById(Long id) {
         return super.repository.deleteById(id);
     }
+
+    @Override
+    public Mono<Boolean> existsByEmail(String email) {
+        return super.repository.existsByEmail(email);
+    }
 }
