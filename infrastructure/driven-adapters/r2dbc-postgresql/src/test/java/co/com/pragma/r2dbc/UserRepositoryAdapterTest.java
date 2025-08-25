@@ -85,18 +85,6 @@ class UserRepositoryAdapterTest {
                 .verifyComplete();
     }
 
-//    @Test
-//    void mustFindByExample() {
-//        when(repository.findAll(any(Example.class))).thenReturn(Flux.just("test"));
-//        when(mapper.map("test", Object.class)).thenReturn("test");
-//
-//        Flux<Object> result = repositoryAdapter.findByExample("test");
-//
-//        StepVerifier.create(result)
-//                .expectNextMatches(value -> value.equals("test"))
-//                .verifyComplete();
-//    }
-//
     @Test
     void mustSaveValue() {
         UserEntity userEntity = UserEntity.builder()
