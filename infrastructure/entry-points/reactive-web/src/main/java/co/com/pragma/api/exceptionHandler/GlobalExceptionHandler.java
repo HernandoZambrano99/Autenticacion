@@ -47,7 +47,6 @@ public class GlobalExceptionHandler extends AbstractErrorWebExceptionHandler {
                     .bodyValue(body);
         }
 
-        // 409 - conflicto (ej. email ya registrado desde el use case)
         if (error instanceof IllegalArgumentException iae) {
             var body = Map.of(
                     "status", HttpStatus.CONFLICT.value(),
@@ -60,7 +59,6 @@ public class GlobalExceptionHandler extends AbstractErrorWebExceptionHandler {
                     .bodyValue(body);
         }
 
-        // 400 - cuerpo mal formado / tipos inválidos
         if (error instanceof org.springframework.web.server.ServerWebInputException sie) {
             var body = Map.of(
                     "status", HttpStatus.BAD_REQUEST.value(),
@@ -73,7 +71,6 @@ public class GlobalExceptionHandler extends AbstractErrorWebExceptionHandler {
                     .bodyValue(body);
         }
 
-        // 500 - fallback
         var errorProps = getErrorAttributes(request, ErrorAttributeOptions.defaults());
         log.error("Error no controlado: {}", error.getMessage(), error);
         return ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR)
