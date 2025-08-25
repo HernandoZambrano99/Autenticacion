@@ -1,13 +1,15 @@
 package co.com.pragma.api;
 
 import co.com.pragma.api.dto.UserRequestDto;
+import co.com.pragma.api.exceptionHandler.RequestValidationException;
 import co.com.pragma.model.user.User;
 import co.com.pragma.usecase.user.UserUseCase;
+import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.support.WebExchangeBindException;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
@@ -18,32 +20,31 @@ import reactor.core.publisher.Mono;
 public class Handler {
 
     private final UserUseCase userUseCase;
+    private final Validator validator;
 
     public Mono<ServerResponse> listenSaveUser(ServerRequest serverRequest) {
         return serverRequest.bodyToMono(UserRequestDto.class)
-                .flatMap(userRequestDto -> {
-                    User user = mapToDomain(userRequestDto);
-                    return userUseCase.saveUser(user);
+                .flatMap(dto -> {
+                    var violations = validator.validate(dto);
+                    if (!violations.isEmpty()) {
+                        var details = violations.stream()
+                                .map(v -> new RequestValidationException.FieldErrorDetail(
+                                        v.getPropertyPath().toString(),
+                                        v.getMessage()))
+                                .toList();
+                        return Mono.error(new RequestValidationException(details));
+                    }
+                    return Mono.just(dto);
                 })
-                .flatMap(savedUser -> ServerResponse.ok()
+                .map(this::mapToDomain)
+                .flatMap(userUseCase::saveUser)
+                .flatMap(savedUser -> ServerResponse.status(HttpStatus.CREATED)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .bodyValue(savedUser))
-                .onErrorResume(WebExchangeBindException.class, ex -> {
-                    var errors = ex.getFieldErrors().stream()
-                            .map(err -> err.getField() + ": " + err.getDefaultMessage())
-                            .toList();
-                    return ServerResponse.badRequest().bodyValue(errors);
-                })
-                .onErrorResume(e -> ServerResponse.badRequest().bodyValue("Error: " + e.getMessage()));
+                        .bodyValue(savedUser));
     }
 
     public Mono<ServerResponse> listenFindAll(ServerRequest serverRequest) {
         return ServerResponse.ok().bodyValue(userUseCase.findAllUsers());
-    }
-
-    public Mono<ServerResponse> listenPOSTUseCase(ServerRequest serverRequest) {
-        // useCase.logic();
-        return ServerResponse.ok().bodyValue("");
     }
 
     private User mapToDomain(UserRequestDto dto) {
