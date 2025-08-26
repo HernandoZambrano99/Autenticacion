@@ -1,6 +1,7 @@
 package co.com.pragma.model.user;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 
@@ -17,6 +18,6 @@ public class User {
     private String address;
     private Integer phone;
     private String email;
-    private Integer salary;
+    private BigDecimal salary;
 
 }

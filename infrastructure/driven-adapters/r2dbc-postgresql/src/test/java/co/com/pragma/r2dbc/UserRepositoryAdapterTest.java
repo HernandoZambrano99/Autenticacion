@@ -13,6 +13,8 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
+import java.math.BigDecimal;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -36,7 +38,7 @@ class UserRepositoryAdapterTest {
                 .name("Hernando")
                 .lastName("Zambrano")
                 .email("test@mail.com")
-                .salary(5000)
+                .salary(BigDecimal.valueOf(5000))
                 .build();
 
         User user = User.builder()
@@ -44,7 +46,7 @@ class UserRepositoryAdapterTest {
                 .name("Hernando")
                 .lastName("Zambrano")
                 .email("test@mail.com")
-                .salary(5000)
+                .salary(BigDecimal.valueOf(5000))
                 .build();
 
         when(repository.findById(1L)).thenReturn(Mono.just(userEntity));
@@ -64,7 +66,7 @@ class UserRepositoryAdapterTest {
                 .name("Hernando")
                 .lastName("Zambrano")
                 .email("test@mail.com")
-                .salary(5000)
+                .salary(BigDecimal.valueOf(5000))
                 .build();
 
         User user = User.builder()
@@ -72,7 +74,7 @@ class UserRepositoryAdapterTest {
                 .name("Hernando")
                 .lastName("Zambrano")
                 .email("test@mail.com")
-                .salary(5000)
+                .salary(BigDecimal.valueOf(5000))
                 .build();
 
         when(repository.findAll()).thenReturn(Flux.just(userEntity));
@@ -92,7 +94,7 @@ class UserRepositoryAdapterTest {
                 .name("Hernando")
                 .lastName("Zambrano")
                 .email("test@mail.com")
-                .salary(5000)
+                .salary(BigDecimal.valueOf(5000))
                 .build();
 
         User user = User.builder()
@@ -100,7 +102,7 @@ class UserRepositoryAdapterTest {
                 .name("Hernando")
                 .lastName("Zambrano")
                 .email("test@mail.com")
-                .salary(5000)
+                .salary(BigDecimal.valueOf(5000))
                 .build();
 
         when(repository.save(any(UserEntity.class))).thenReturn(Mono.just(userEntity));

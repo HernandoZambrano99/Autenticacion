@@ -1,5 +1,6 @@
 package co.com.pragma.api.exceptionHandler;
 
+import co.com.pragma.api.constants.ErrorConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.web.reactive.error.AbstractErrorWebExceptionHandler;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
@@ -38,10 +39,10 @@ public class GlobalExceptionHandler extends AbstractErrorWebExceptionHandler {
 
         if (error instanceof RequestValidationException vex) {
             var body = new LinkedHashMap<String, Object>();
-            body.put("status", HttpStatus.BAD_REQUEST.value());
-            body.put("error", "Validation Failed");
-            body.put("path", request.path());
-            body.put("details", vex.getDetails());
+            body.put(ErrorConstants.STATUS, HttpStatus.BAD_REQUEST.value());
+            body.put(ErrorConstants.ERROR, ErrorConstants.VALIDATION_FAILED);
+            body.put(ErrorConstants.PATH, request.path());
+            body.put(ErrorConstants.DETAILS, vex.getDetails());
             return ServerResponse.status(HttpStatus.BAD_REQUEST)
                     .contentType(MediaType.APPLICATION_JSON)
                     .bodyValue(body);
@@ -49,10 +50,10 @@ public class GlobalExceptionHandler extends AbstractErrorWebExceptionHandler {
 
         if (error instanceof IllegalArgumentException iae) {
             var body = Map.of(
-                    "status", HttpStatus.CONFLICT.value(),
-                    "error", "Conflict",
-                    "message", iae.getMessage(),
-                    "path", request.path()
+                    ErrorConstants.STATUS, HttpStatus.CONFLICT.value(),
+                    ErrorConstants.ERROR, ErrorConstants.CONFLICT,
+                    ErrorConstants.MESSAGE, iae.getMessage(),
+                    ErrorConstants.PATH, request.path()
             );
             return ServerResponse.status(HttpStatus.CONFLICT)
                     .contentType(MediaType.APPLICATION_JSON)
@@ -61,10 +62,10 @@ public class GlobalExceptionHandler extends AbstractErrorWebExceptionHandler {
 
         if (error instanceof org.springframework.web.server.ServerWebInputException sie) {
             var body = Map.of(
-                    "status", HttpStatus.BAD_REQUEST.value(),
-                    "error", "Bad Request",
-                    "message", sie.getReason(),
-                    "path", request.path()
+                    ErrorConstants.STATUS, HttpStatus.BAD_REQUEST.value(),
+                    ErrorConstants.ERROR, ErrorConstants.BAD_REQUEST,
+                    ErrorConstants.MESSAGE, sie.getReason(),
+                    ErrorConstants.PATH, request.path()
             );
             return ServerResponse.status(HttpStatus.BAD_REQUEST)
                     .contentType(MediaType.APPLICATION_JSON)

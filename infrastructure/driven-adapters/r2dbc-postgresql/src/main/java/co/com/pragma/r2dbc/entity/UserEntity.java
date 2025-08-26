@@ -5,6 +5,7 @@ import org.springframework.data.relational.core.mapping.Table;
 import org.springframework.data.relational.core.mapping.Column;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Table(name = "users")
@@ -37,5 +38,5 @@ public class UserEntity {
     private String email;
 
     @Column("salary")
-    private Integer salary;
+    private BigDecimal salary;
 }

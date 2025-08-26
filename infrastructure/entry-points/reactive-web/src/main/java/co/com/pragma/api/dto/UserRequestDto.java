@@ -3,6 +3,7 @@ package co.com.pragma.api.dto;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Getter
@@ -31,5 +32,5 @@ public class UserRequestDto {
     @NotNull(message = "El salario es obligatorio")
     @Min(value = 0, message = "El salario no puede ser negativo")
     @Max(value = 15000000, message = "El salario no puede superar 15 millones")
-    private Integer salary;
+    private BigDecimal salary;
 }
