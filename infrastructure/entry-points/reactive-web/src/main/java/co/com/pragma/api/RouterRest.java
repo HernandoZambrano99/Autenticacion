@@ -32,6 +32,7 @@ public class RouterRest {
                     beanClass = Handler.class,
                     beanMethod = "listenSaveUser",
                     operation = @Operation(
+                            operationId = "Guardar",
                             summary = "Guardar un usuario",
                             description = "Crea un nuevo usuario en el sistema",
                             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
