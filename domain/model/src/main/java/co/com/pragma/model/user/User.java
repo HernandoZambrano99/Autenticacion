@@ -14,10 +14,10 @@ public class User {
     private Long id;
     private String name;
     private String lastName;
+    private String identityDocument;
     private LocalDateTime birthday;
     private String address;
     private Integer phone;
     private String email;
     private BigDecimal salary;
-
 }

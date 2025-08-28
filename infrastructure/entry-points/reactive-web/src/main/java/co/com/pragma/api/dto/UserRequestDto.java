@@ -19,6 +19,8 @@ public class UserRequestDto {
     @NotBlank(message = "El apellido es obligatorio")
     private String lastName;
 
+    private String identityDocument;
+
     private LocalDateTime birthday;
 
     private String address;

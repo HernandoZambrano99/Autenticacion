@@ -15,6 +15,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
+import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
 import static org.springframework.web.reactive.function.server.RequestPredicates.POST;
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 
@@ -48,9 +49,29 @@ public class RouterRest {
                                     @ApiResponse(responseCode = "500", description = "Error interno del servidor")
                             }
                     )
+            ),
+            @RouterOperation(
+                    path = "/api/v1/usuarios/{id}",
+                    method = org.springframework.web.bind.annotation.RequestMethod.GET,
+                    beanClass = Handler.class,
+                    beanMethod = "listenFindById",
+                    operation = @Operation(
+                            operationId = "BuscarPorId",
+                            summary = "Buscar usuario por ID",
+                            description = "Obtiene un usuario a partir de su identificador",
+                            responses = {
+                                    @ApiResponse(responseCode = "200", description = "Usuario encontrado",
+                                            content = @Content(schema = @Schema(implementation = User.class))
+                                    ),
+                                    @ApiResponse(responseCode = "404", description = "Usuario no encontrado"),
+                                    @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+                            }
+                    )
             )
     })
     public RouterFunction<ServerResponse> routerFunction(Handler handler) {
-        return route(POST("/api/v1/usuarios"), userHandler::listenSaveUser);
+        return route(POST("/api/v1/usuarios"), userHandler::listenSaveUser)
+                .andRoute(GET("/api/v1/usuarios/{id}"), userHandler::listenFindById)
+                .andRoute(GET("/api/v1/usuarios/find/{identityDocument}"), userHandler::listenFindByDocument);
     }
 }

@@ -21,7 +21,7 @@ public class UserRepositoryAdapter extends ReactiveAdapterOperations<
          *  super(repository, mapper, d -> mapper.mapBuilder(d,ObjectModel.ObjectModelBuilder.class).build());
          *  Or using mapper.map with the class of the object model
          */
-        super(repository, mapper, d -> mapper.map(d, User.class/* change for domain model */));
+        super(repository, mapper, d -> mapper.map(d, User.class));
     }
 
     @Override
@@ -37,5 +37,11 @@ public class UserRepositoryAdapter extends ReactiveAdapterOperations<
     @Override
     public Mono<Boolean> existsByEmail(String email) {
         return super.repository.existsByEmail(email);
+    }
+
+    @Override
+    public Mono<User> findByDocument(String identityDocument) {
+        return super.repository.findByIdentityDocument(identityDocument)
+                .map(userEntity -> super.mapper.map(userEntity, User.class));
     }
 }

@@ -24,4 +24,12 @@ public class UserUseCase {
     public Flux<User> findAllUsers(){
         return userRepository.findAll();
     }
+
+    public Mono<User> findUserById(Long id){
+        return userRepository.findById(id);
+    }
+
+    public Mono<User> findUserByIdentityDocument(String identityDocument){
+        return userRepository.findByDocument(identityDocument);
+    }
 }

@@ -47,11 +47,29 @@ public class Handler {
         return ServerResponse.ok().bodyValue(userUseCase.findAllUsers());
     }
 
+    public Mono<ServerResponse> listenFindById(ServerRequest serverRequest) {
+        Long id = Long.valueOf(serverRequest.pathVariable("id"));
+        return userUseCase.findUserById(id)
+                .flatMap(user -> ServerResponse.ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .bodyValue(user))
+                .switchIfEmpty(ServerResponse.notFound().build());
+    }
+
+    public Mono<ServerResponse> listenFindByDocument(ServerRequest serverRequest){
+        String identityDocument = serverRequest.pathVariable("identityDocument");
+        return userUseCase.findUserByIdentityDocument(identityDocument)
+                .flatMap(user -> ServerResponse.ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .bodyValue(user));
+    }
+
     private User mapToDomain(UserRequestDto dto) {
         return User.builder()
                 .name(dto.getName())
                 .lastName(dto.getLastName())
                 .birthday(dto.getBirthday())
+                .identityDocument(dto.getIdentityDocument())
                 .address(dto.getAddress())
                 .phone(dto.getPhone())
                 .email(dto.getEmail())
