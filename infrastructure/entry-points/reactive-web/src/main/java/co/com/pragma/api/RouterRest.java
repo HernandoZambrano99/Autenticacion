@@ -24,6 +24,7 @@ import static org.springframework.web.reactive.function.server.RouterFunctions.r
 @Tag(name = "Usuarios", description = "Operaciones relacionadas con usuarios")
 public class RouterRest {
     private final Handler userHandler;
+    private final LoginHandler loginHandler;
 
     @Bean
     @RouterOperations({
@@ -72,6 +73,7 @@ public class RouterRest {
     public RouterFunction<ServerResponse> routerFunction(Handler handler) {
         return route(POST("/api/v1/usuarios"), userHandler::listenSaveUser)
                 .andRoute(GET("/api/v1/usuarios/{id}"), userHandler::listenFindById)
+                .andRoute(POST("/api/v1/login"), loginHandler::login)
                 .andRoute(GET("/api/v1/usuarios/find/{identityDocument}"), userHandler::listenFindByDocument);
     }
 }

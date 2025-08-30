@@ -1,4 +1,5 @@
 package co.com.pragma.model.user;
+import co.com.pragma.model.rol.Role;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -20,4 +21,7 @@ public class User {
     private Integer phone;
     private String email;
     private BigDecimal salary;
+    private String password;
+
+    private Role role;
 }

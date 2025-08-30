@@ -37,7 +37,7 @@ public class Handler {
                     return Mono.just(dto);
                 })
                 .map(this::mapToDomain)
-                .flatMap(userUseCase::saveUser)
+                .flatMap(user -> userUseCase.saveUser(user, user.getRole() != null ? user.getRole().getId() : null))
                 .flatMap(savedUser -> ServerResponse.status(HttpStatus.CREATED)
                         .contentType(MediaType.APPLICATION_JSON)
                         .bodyValue(savedUser));
@@ -47,6 +47,14 @@ public class Handler {
         return ServerResponse.ok().bodyValue(userUseCase.findAllUsers());
     }
 
+    public Mono<ServerResponse> listenFindByDocument(ServerRequest serverRequest){
+        String identityDocument = serverRequest.pathVariable("identityDocument");
+        return userUseCase.findUserByIdentityDocument(identityDocument)
+                .flatMap(user -> ServerResponse.ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .bodyValue(user));
+    }
+
     public Mono<ServerResponse> listenFindById(ServerRequest serverRequest) {
         Long id = Long.valueOf(serverRequest.pathVariable("id"));
         return userUseCase.findUserById(id)
@@ -54,14 +62,6 @@ public class Handler {
                         .contentType(MediaType.APPLICATION_JSON)
                         .bodyValue(user))
                 .switchIfEmpty(ServerResponse.notFound().build());
-    }
-
-    public Mono<ServerResponse> listenFindByDocument(ServerRequest serverRequest){
-        String identityDocument = serverRequest.pathVariable("identityDocument");
-        return userUseCase.findUserByIdentityDocument(identityDocument)
-                .flatMap(user -> ServerResponse.ok()
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .bodyValue(user));
     }
 
     private User mapToDomain(UserRequestDto dto) {

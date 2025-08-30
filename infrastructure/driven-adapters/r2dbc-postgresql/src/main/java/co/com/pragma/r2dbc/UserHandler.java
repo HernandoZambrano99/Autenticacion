@@ -15,7 +15,7 @@ public class UserHandler {
     private final TransactionalOperator transactionalOperator;
 
     public Mono<User> saveUser(User user) {
-        return userUseCase.saveUser(user)
+        return userUseCase.saveUser(user,null)
                 .as(transactionalOperator::transactional);
     }
 }

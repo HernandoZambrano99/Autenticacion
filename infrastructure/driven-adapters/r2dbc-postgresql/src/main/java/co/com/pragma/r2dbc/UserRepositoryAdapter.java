@@ -1,5 +1,6 @@
 package co.com.pragma.r2dbc;
 
+import co.com.pragma.model.rol.Role;
 import co.com.pragma.model.user.User;
 import co.com.pragma.model.user.gateways.UserRepository;
 import co.com.pragma.r2dbc.entity.UserEntity;
@@ -15,13 +16,17 @@ public class UserRepositoryAdapter extends ReactiveAdapterOperations<
         Long,
         ReactiveUserRepository
         > implements UserRepository {
-    public UserRepositoryAdapter(ReactiveUserRepository repository, ObjectMapper mapper) {
+
+    private final ReactiveRoleRepository roleRepository;
+
+    public UserRepositoryAdapter(ReactiveUserRepository repository, ObjectMapper mapper, ReactiveRoleRepository roleRepository) {
         /**
          *  Could be use mapper.mapBuilder if your domain model implement builder pattern
          *  super(repository, mapper, d -> mapper.mapBuilder(d,ObjectModel.ObjectModelBuilder.class).build());
          *  Or using mapper.map with the class of the object model
          */
         super(repository, mapper, d -> mapper.map(d, User.class));
+        this.roleRepository = roleRepository;
     }
 
     @Override
@@ -43,5 +48,24 @@ public class UserRepositoryAdapter extends ReactiveAdapterOperations<
     public Mono<User> findByDocument(String identityDocument) {
         return super.repository.findByIdentityDocument(identityDocument)
                 .map(userEntity -> super.mapper.map(userEntity, User.class));
+    }
+
+    @Override
+    public Mono<User> findByEmail(String email) {
+        return super.repository.findByEmail(email)
+                .flatMap(entity -> mapWithRole(mapper.map(entity, User.class)));
+    }
+
+    private Mono<User> mapWithRole(User user) {
+        return roleRepository.findById(user.getRole().getId())
+                .map(roleEntity -> {
+                    Role role = Role.builder()
+                            .id(roleEntity.getId())
+                            .name(roleEntity.getName())
+                            .description(roleEntity.getDescription())
+                            .build();
+                    user.setRole(role);
+                    return user;
+                });
     }
 }

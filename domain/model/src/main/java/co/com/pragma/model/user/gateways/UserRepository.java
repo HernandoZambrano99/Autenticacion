@@ -18,4 +18,6 @@ public interface UserRepository {
 
     Mono<User> findByDocument(String identityDocument);
 
+    Mono<User> findByEmail(String email);
+
 }

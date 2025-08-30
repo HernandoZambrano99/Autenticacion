@@ -42,4 +42,10 @@ public class UserEntity {
 
     @Column("identity_document")
     private String identityDocument;
+
+    @Column("password")
+    private String password;
+
+    @Column("id_rol")
+    private Long roleId;
 }

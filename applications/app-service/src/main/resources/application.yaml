@@ -30,3 +30,7 @@ management:
         enabled: true
 cors:
   allowed-origins: "http://localhost:4200,http://localhost:8080"
+security:
+  jwt:
+    secret: "BASE64_ENCODED_256BIT_SECRET_EXAMPLE==" # usa base64 256-bit real en prod
+    expiration-ms: 3600000  # 1 hora
