@@ -74,6 +74,7 @@ public class Handler {
                 .phone(dto.getPhone())
                 .email(dto.getEmail())
                 .salary(dto.getSalary())
+                .password(dto.getPassword())
                 .build();
     }
 }

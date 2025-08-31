@@ -35,4 +35,7 @@ public class UserRequestDto {
     @Min(value = 0, message = "El salario no puede ser negativo")
     @Max(value = 15000000, message = "El salario no puede superar 15 millones")
     private BigDecimal salary;
+
+    @NotBlank(message = "Es necesario definir una contraseña")
+    private String password;
 }

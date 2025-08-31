@@ -42,8 +42,9 @@ public class LoginHandler {
                                     return ServerResponse.ok()
                                             .contentType(MediaType.APPLICATION_JSON)
                                             .bodyValue(Map.of(
-                                                    "token", token
-
+                                                    "token_type", "Bearer",
+                                                    "expires_in", jwtUtil.getExpirationMs() / 1000,
+                                                    "access_token", token
                                             ));
                                 })
                         )

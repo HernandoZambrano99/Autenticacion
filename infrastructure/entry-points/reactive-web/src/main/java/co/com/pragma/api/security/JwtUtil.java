@@ -42,4 +42,8 @@ public class JwtUtil {
                 .build()
                 .parseClaimsJws(token);
     }
+
+    public long getExpirationMs() {
+        return expirationMs;
+    }
 }
