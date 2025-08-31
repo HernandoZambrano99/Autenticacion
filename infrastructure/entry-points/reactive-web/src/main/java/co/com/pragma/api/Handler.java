@@ -42,7 +42,7 @@ public class Handler {
                     return Mono.just(dto);
                 })
                 .map(userRequestMapper::toModel)
-                .flatMap(user -> userUseCase.saveUser(user, user.getRole() != null ? user.getRole().getId() : null))
+                .flatMap(userUseCase::saveUser)
                 .map(userResponseMapper::toDto)
                 .flatMap(savedUser -> ServerResponse.status(HttpStatus.CREATED)
                         .contentType(MediaType.APPLICATION_JSON)

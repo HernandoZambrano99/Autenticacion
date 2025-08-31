@@ -18,25 +18,18 @@ public class UserUseCase {
     private final PasswordEncoderGateway passwordEncoderGateway;
     private final RoleRepository roleRepository;
 
-    public Mono<User> saveUser(User user, @Nullable Long allowedRoleId) {
+    public Mono<User> saveUser(User user) {
         return userRepository.existsByEmail(user.getEmail())
                 .flatMap(exists -> {
                     if (exists) {
                         return Mono.error(new IllegalArgumentException("El correo ya está registrado"));
                     }
-                    // Hash password en boundedElastic
                     return Mono.fromCallable(() -> passwordEncoderGateway.encode(user.getPassword()))
                             .subscribeOn(Schedulers.boundedElastic())
                             .flatMap(hashed -> {
                                 user.setPassword(hashed);
                                 Mono<Role> roleResolvedMono;
-                                if (allowedRoleId != null) {
-                                    roleResolvedMono = roleRepository.findById(allowedRoleId);
-                                } else if (user.getRole() != null && user.getRole().getId() != null) {
-                                    roleResolvedMono = roleRepository.findById(user.getRole().getId());
-                                } else {
-                                    roleResolvedMono = roleRepository.findByName("ROLE_CLIENT");
-                                }
+                                roleResolvedMono = roleRepository.findByName("ROLE_CLIENT");
                                 return roleResolvedMono
                                         .map(role -> {
                                             user.setRole(role);

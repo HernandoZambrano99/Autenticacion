@@ -1,6 +1,5 @@
 package co.com.pragma.r2dbc;
 
-import co.com.pragma.model.enums.RoleEnum;
 import co.com.pragma.model.rol.Role;
 import co.com.pragma.model.user.User;
 import co.com.pragma.model.user.gateways.UserRepository;
@@ -26,8 +25,29 @@ public class UserRepositoryAdapter extends ReactiveAdapterOperations<
          *  super(repository, mapper, d -> mapper.mapBuilder(d,ObjectModel.ObjectModelBuilder.class).build());
          *  Or using mapper.map with the class of the object model
          */
-        super(repository, mapper, d -> mapper.map(d, User.class));
+        super(repository, mapper, null);
         this.roleRepository = roleRepository;
+    }
+
+    @Override
+    protected UserEntity toData(User user) {
+        UserEntity entity = mapper.map(user, UserEntity.class);
+
+        if (user.getRole() != null) {
+            entity.setRoleId(user.getRole().getId());
+        }
+
+        return entity;
+    }
+
+    @Override
+    protected User toEntity(UserEntity entity) {
+        User user = mapper.map(entity, User.class);
+        if (entity.getRoleId() != null) {
+            user.setRole(Role.builder().id(entity.getRoleId()).build());
+        }
+
+        return user;
     }
 
     @Override
@@ -62,7 +82,7 @@ public class UserRepositoryAdapter extends ReactiveAdapterOperations<
                 .map(roleEntity -> {
                     User user = mapper.map(entity, User.class);
 
-                     user.setRole(Role.builder()
+                    user.setRole(Role.builder()
                             .id(roleEntity.getId())
                             .name(roleEntity.getName())
                             .description(roleEntity.getDescription())
