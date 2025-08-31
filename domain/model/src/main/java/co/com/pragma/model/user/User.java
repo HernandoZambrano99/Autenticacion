@@ -1,4 +1,5 @@
 package co.com.pragma.model.user;
+
 import co.com.pragma.model.rol.Role;
 import lombok.*;
 

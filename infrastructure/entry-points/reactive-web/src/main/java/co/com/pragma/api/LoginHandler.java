@@ -12,6 +12,7 @@ import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 import java.util.Map;
 
@@ -25,27 +26,32 @@ public class LoginHandler {
 
     public Mono<ServerResponse> login(ServerRequest request) {
         return request.bodyToMono(LoginRequestDto.class)
+                .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST, "Body vacío o inválido")))
                 .flatMap(dto -> userRepository.findByEmail(dto.getEmail())
                         .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Credenciales inválidas")))
                         .flatMap(user -> Mono.fromCallable(() -> passwordEncoder.matches(dto.getPassword(), user.getPassword()))
-                                .subscribeOn(reactor.core.scheduler.Schedulers.boundedElastic())
+                                .subscribeOn(Schedulers.boundedElastic())
                                 .flatMap(matches -> {
                                     if (!matches) {
-                                        // sin límite de intentos: simplemente rechazar
                                         return Mono.error(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Credenciales inválidas"));
                                     }
-                                    String token = jwtUtil.generateToken(user.getId(), user.getEmail(), user.getRole().getName());
-                                    Map<String, Object> body = Map.of(
-                                            "token", token,
-                                            "userId", user.getId(),
-                                            "email", user.getEmail(),
-                                            "role", user.getRole().getName()
-                                    );
+
+                                    String roleName = (user.getRole() != null) ? user.getRole().getName() : "ROLE_CLIENT";
+                                    String token = jwtUtil.generateToken(user.getId(), user.getEmail(), roleName);
+
                                     return ServerResponse.ok()
                                             .contentType(MediaType.APPLICATION_JSON)
-                                            .bodyValue(body);
+                                            .bodyValue(Map.of(
+                                                    "token", token
+
+                                            ));
                                 })
                         )
-                );
+                )
+                .onErrorResume(ResponseStatusException.class,
+                        ex -> ServerResponse.status(ex.getStatusCode())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .bodyValue(Map.of("error", ex.getReason())));
     }
+
 }

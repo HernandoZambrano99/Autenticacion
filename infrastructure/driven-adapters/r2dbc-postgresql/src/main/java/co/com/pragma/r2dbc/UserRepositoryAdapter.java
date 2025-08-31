@@ -1,5 +1,6 @@
 package co.com.pragma.r2dbc;
 
+import co.com.pragma.model.enums.RoleEnum;
 import co.com.pragma.model.rol.Role;
 import co.com.pragma.model.user.User;
 import co.com.pragma.model.user.gateways.UserRepository;
@@ -53,18 +54,20 @@ public class UserRepositoryAdapter extends ReactiveAdapterOperations<
     @Override
     public Mono<User> findByEmail(String email) {
         return super.repository.findByEmail(email)
-                .flatMap(entity -> mapWithRole(mapper.map(entity, User.class)));
+                .flatMap(entity -> mapWithRole(entity));
     }
 
-    private Mono<User> mapWithRole(User user) {
-        return roleRepository.findById(user.getRole().getId())
+    private Mono<User> mapWithRole(UserEntity entity) {
+        return roleRepository.findById(entity.getRoleId())
                 .map(roleEntity -> {
-                    Role role = Role.builder()
+                    User user = mapper.map(entity, User.class);
+
+                     user.setRole(Role.builder()
                             .id(roleEntity.getId())
                             .name(roleEntity.getName())
                             .description(roleEntity.getDescription())
-                            .build();
-                    user.setRole(role);
+                            .build());
+
                     return user;
                 });
     }

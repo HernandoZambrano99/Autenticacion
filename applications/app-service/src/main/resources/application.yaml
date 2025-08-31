@@ -32,5 +32,5 @@ cors:
   allowed-origins: "http://localhost:4200,http://localhost:8080"
 security:
   jwt:
-    secret: "BASE64_ENCODED_256BIT_SECRET_EXAMPLE==" # usa base64 256-bit real en prod
+    secret: "0Dz2RFrDttxXG9ZgQ9s6nJ8lcnFv9HQ1mFtuG3B0TXQ="
     expiration-ms: 3600000  # 1 hora

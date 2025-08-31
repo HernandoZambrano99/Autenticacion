@@ -49,10 +49,7 @@ public class SecurityConfig {
     }
 
     private AuthenticationWebFilter jwtAuthenticationFilter() {
-        ReactiveAuthenticationManager manager = authentication -> {
-            authentication.setAuthenticated(true);
-            return Mono.just(authentication);
-        };
+        ReactiveAuthenticationManager manager = authentication -> Mono.just(authentication);
 
         AuthenticationWebFilter filter = new AuthenticationWebFilter(manager);
         filter.setRequiresAuthenticationMatcher(ServerWebExchangeMatchers.anyExchange());
@@ -74,7 +71,7 @@ public class SecurityConfig {
                         .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList());
 
-                return Mono.just(new UsernamePasswordAuthenticationToken(email, token, authorities));
+                return Mono.just(new UsernamePasswordAuthenticationToken(email, null, authorities));
             } catch (Exception e) {
                 return Mono.empty();
             }
