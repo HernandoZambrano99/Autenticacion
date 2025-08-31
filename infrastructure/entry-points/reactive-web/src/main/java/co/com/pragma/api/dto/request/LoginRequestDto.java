@@ -1,4 +1,4 @@
-package co.com.pragma.api.dto;
+package co.com.pragma.api.dto.request;
 
 import lombok.*;
 

@@ -1,6 +1,6 @@
 package co.com.pragma.api;
 
-import co.com.pragma.api.dto.UserRequestDto;
+import co.com.pragma.api.dto.request.UserRequestDto;
 import co.com.pragma.model.user.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;

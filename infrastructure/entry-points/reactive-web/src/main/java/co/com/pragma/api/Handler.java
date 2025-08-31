@@ -1,7 +1,10 @@
 package co.com.pragma.api;
 
-import co.com.pragma.api.dto.UserRequestDto;
+import co.com.pragma.api.dto.request.UserRequestDto;
+import co.com.pragma.api.dto.response.UserResponseDto;
 import co.com.pragma.api.exceptionHandler.RequestValidationException;
+import co.com.pragma.api.mapper.UserRequestMapper;
+import co.com.pragma.api.mapper.UserResponseMapper;
 import co.com.pragma.model.user.User;
 import co.com.pragma.usecase.user.UserUseCase;
 import jakarta.validation.Validator;
@@ -21,6 +24,8 @@ public class Handler {
 
     private final UserUseCase userUseCase;
     private final Validator validator;
+    private final UserRequestMapper userRequestMapper;
+    private final UserResponseMapper userResponseMapper;
 
     public Mono<ServerResponse> listenSaveUser(ServerRequest serverRequest) {
         return serverRequest.bodyToMono(UserRequestDto.class)
@@ -36,8 +41,9 @@ public class Handler {
                     }
                     return Mono.just(dto);
                 })
-                .map(this::mapToDomain)
+                .map(userRequestMapper::toModel)
                 .flatMap(user -> userUseCase.saveUser(user, user.getRole() != null ? user.getRole().getId() : null))
+                .map(userResponseMapper::toDto)
                 .flatMap(savedUser -> ServerResponse.status(HttpStatus.CREATED)
                         .contentType(MediaType.APPLICATION_JSON)
                         .bodyValue(savedUser));
@@ -64,17 +70,4 @@ public class Handler {
                 .switchIfEmpty(ServerResponse.notFound().build());
     }
 
-    private User mapToDomain(UserRequestDto dto) {
-        return User.builder()
-                .name(dto.getName())
-                .lastName(dto.getLastName())
-                .birthday(dto.getBirthday())
-                .identityDocument(dto.getIdentityDocument())
-                .address(dto.getAddress())
-                .phone(dto.getPhone())
-                .email(dto.getEmail())
-                .salary(dto.getSalary())
-                .password(dto.getPassword())
-                .build();
-    }
 }

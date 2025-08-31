@@ -1,6 +1,6 @@
 package co.com.pragma.api;
 
-import co.com.pragma.api.dto.LoginRequestDto;
+import co.com.pragma.api.dto.request.LoginRequestDto;
 import co.com.pragma.api.security.JwtUtil;
 import co.com.pragma.model.user.gateways.PasswordEncoderGateway;
 import co.com.pragma.model.user.gateways.UserRepository;
