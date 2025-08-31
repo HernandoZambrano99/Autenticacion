@@ -1,10 +1,13 @@
 package co.com.pragma.api;
 
+import co.com.pragma.api.constants.LoginConstants;
 import co.com.pragma.api.dto.request.LoginRequestDto;
+import co.com.pragma.api.exceptionHandler.InvalidCredentialsException;
 import co.com.pragma.api.security.JwtUtil;
 import co.com.pragma.model.user.gateways.PasswordEncoderGateway;
 import co.com.pragma.model.user.gateways.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.java.Log;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -26,33 +29,29 @@ public class LoginHandler {
 
     public Mono<ServerResponse> login(ServerRequest request) {
         return request.bodyToMono(LoginRequestDto.class)
-                .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST, "Body vacío o inválido")))
+                .switchIfEmpty(Mono.error(new IllegalArgumentException(LoginConstants.ERROR_BODY_INVALID)))
                 .flatMap(dto -> userRepository.findByEmail(dto.getEmail())
-                        .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Credenciales inválidas")))
+                        .switchIfEmpty(Mono.error(new InvalidCredentialsException(LoginConstants.ERROR_INVALID_CREDENTIALS)))
                         .flatMap(user -> Mono.fromCallable(() -> passwordEncoder.matches(dto.getPassword(), user.getPassword()))
                                 .subscribeOn(Schedulers.boundedElastic())
                                 .flatMap(matches -> {
                                     if (!matches) {
-                                        return Mono.error(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Credenciales inválidas"));
+                                        return Mono.error(new InvalidCredentialsException(LoginConstants.ERROR_INVALID_CREDENTIALS));
                                     }
 
-                                    String roleName = (user.getRole() != null) ? user.getRole().getName() : "ROLE_CLIENT";
+                                    String roleName = (user.getRole() != null) ? user.getRole().getName() : LoginConstants.DEFAULT_ROLE;
                                     String token = jwtUtil.generateToken(user.getId(), user.getEmail(), roleName);
 
                                     return ServerResponse.ok()
                                             .contentType(MediaType.APPLICATION_JSON)
                                             .bodyValue(Map.of(
-                                                    "token_type", "Bearer",
-                                                    "expires_in", jwtUtil.getExpirationMs() / 1000,
-                                                    "access_token", token
+                                                    LoginConstants.TOKEN_TYPE, LoginConstants.TOKEN_TYPE_VALUE,
+                                                    LoginConstants.EXPIRES_IN, jwtUtil.getExpirationMs() / 1000,
+                                                    LoginConstants.ACCESS_TOKEN, token
                                             ));
                                 })
                         )
-                )
-                .onErrorResume(ResponseStatusException.class,
-                        ex -> ServerResponse.status(ex.getStatusCode())
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .bodyValue(Map.of("error", ex.getReason())));
+                );
     }
 
 }

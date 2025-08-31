@@ -1,6 +1,6 @@
 package co.com.pragma.api.exceptionHandler;
 
-import co.com.pragma.api.constants.ErrorConstants;
+import co.com.pragma.api.constants.LoginConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.web.reactive.error.AbstractErrorWebExceptionHandler;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
@@ -39,10 +39,9 @@ public class GlobalExceptionHandler extends AbstractErrorWebExceptionHandler {
 
         if (error instanceof RequestValidationException vex) {
             var body = new LinkedHashMap<String, Object>();
-            body.put(ErrorConstants.STATUS, HttpStatus.BAD_REQUEST.value());
-            body.put(ErrorConstants.ERROR, ErrorConstants.VALIDATION_FAILED);
-            body.put(ErrorConstants.PATH, request.path());
-            body.put(ErrorConstants.DETAILS, vex.getDetails());
+            body.put(LoginConstants.ERROR, LoginConstants.VALIDATION_FAILED);
+            body.put(LoginConstants.PATH, request.path());
+            body.put(LoginConstants.DETAILS, vex.getDetails());
             return ServerResponse.status(HttpStatus.BAD_REQUEST)
                     .contentType(MediaType.APPLICATION_JSON)
                     .bodyValue(body);
@@ -50,10 +49,9 @@ public class GlobalExceptionHandler extends AbstractErrorWebExceptionHandler {
 
         if (error instanceof IllegalArgumentException iae) {
             var body = Map.of(
-                    ErrorConstants.STATUS, HttpStatus.CONFLICT.value(),
-                    ErrorConstants.ERROR, ErrorConstants.CONFLICT,
-                    ErrorConstants.MESSAGE, iae.getMessage(),
-                    ErrorConstants.PATH, request.path()
+                    LoginConstants.ERROR, LoginConstants.CONFLICT,
+                    LoginConstants.MESSAGE, iae.getMessage(),
+                    LoginConstants.PATH, request.path()
             );
             return ServerResponse.status(HttpStatus.CONFLICT)
                     .contentType(MediaType.APPLICATION_JSON)
@@ -62,12 +60,22 @@ public class GlobalExceptionHandler extends AbstractErrorWebExceptionHandler {
 
         if (error instanceof org.springframework.web.server.ServerWebInputException sie) {
             var body = Map.of(
-                    ErrorConstants.STATUS, HttpStatus.BAD_REQUEST.value(),
-                    ErrorConstants.ERROR, ErrorConstants.BAD_REQUEST,
-                    ErrorConstants.MESSAGE, sie.getReason(),
-                    ErrorConstants.PATH, request.path()
+                    LoginConstants.ERROR, LoginConstants.BAD_REQUEST,
+                    LoginConstants.MESSAGE, sie.getReason(),
+                    LoginConstants.PATH, request.path()
             );
             return ServerResponse.status(HttpStatus.BAD_REQUEST)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(body);
+        }
+
+        if (error instanceof InvalidCredentialsException ice) {
+            var body = Map.of(
+                    LoginConstants.ERROR, LoginConstants.UNAUTHORIZED,
+                    LoginConstants.MESSAGE, ice.getMessage(),
+                    LoginConstants.PATH, request.path()
+            );
+            return ServerResponse.status(HttpStatus.UNAUTHORIZED)
                     .contentType(MediaType.APPLICATION_JSON)
                     .bodyValue(body);
         }
