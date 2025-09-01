@@ -40,7 +40,7 @@ public class LoginHandler {
                                     }
 
                                     String roleName = (user.getRole() != null) ? user.getRole().getName() : LoginConstants.DEFAULT_ROLE;
-                                    String token = jwtUtil.generateToken(user.getId(), user.getEmail(), roleName);
+                                    String token = jwtUtil.generateToken(user.getId(), user.getEmail(), roleName, user.getIdentityDocument());
 
                                     return ServerResponse.ok()
                                             .contentType(MediaType.APPLICATION_JSON)

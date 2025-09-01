@@ -24,12 +24,13 @@ public class JwtUtil {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String generateToken(Long userId, String email, String roleName) {
+    public String generateToken(Long userId, String email, String roleName, String identityDocument) {
         Instant now = Instant.now();
         return Jwts.builder()
                 .setSubject(email)
                 .claim("userId", userId)
                 .claim("role", roleName)
+                .claim("identityDocument", identityDocument)
                 .setIssuedAt(Date.from(now))
                 .setExpiration(Date.from(now.plusMillis(expirationMs)))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)

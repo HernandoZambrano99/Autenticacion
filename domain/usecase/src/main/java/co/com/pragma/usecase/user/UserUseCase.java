@@ -3,6 +3,7 @@ package co.com.pragma.usecase.user;
 import co.com.pragma.model.rol.Role;
 import co.com.pragma.model.rol.gateways.RoleRepository;
 import co.com.pragma.model.user.User;
+import co.com.pragma.model.user.gateways.JwtProviderGateway;
 import co.com.pragma.model.user.gateways.PasswordEncoderGateway;
 import co.com.pragma.model.user.gateways.UserRepository;
 import co.com.pragma.usecase.user.constants.LogMessages;
@@ -22,6 +23,7 @@ public class UserUseCase {
     private final UserRepository userRepository;
     private final PasswordEncoderGateway passwordEncoderGateway;
     private final RoleRepository roleRepository;
+    private final JwtProviderGateway jwtProviderGateway;
 
     public Mono<User> saveUser(User user) {
         return userRepository.existsByEmail(user.getEmail())
@@ -62,6 +64,16 @@ public class UserUseCase {
     public Mono<User> findUserByIdentityDocument(String identityDocument) {
         logger.info(MessageFormat.format(LogMessages.FETCHING_USER_BY_DOC, identityDocument));
         return userRepository.findByDocument(identityDocument);
+    }
+
+    public Mono<Boolean> matchDocumentIdWithJwt(String identityDocument, String jwt) {
+        return jwtProviderGateway.extractIdentityDocument(jwt)
+                .flatMap(docFromJwt -> {
+                    if (docFromJwt == null) {
+                        return Mono.just(false);
+                    }
+                    return Mono.just(identityDocument.equals(docFromJwt));
+                });
     }
 
 }

@@ -17,6 +17,8 @@ import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 
+import java.util.Map;
+
 @Component
 @RequiredArgsConstructor
 @Validated
@@ -54,6 +56,8 @@ public class Handler {
     }
 
     public Mono<ServerResponse> listenFindByDocument(ServerRequest serverRequest){
+        String authHeader = serverRequest.headers().firstHeader("Authorization");
+        String jwt = (authHeader != null && authHeader.startsWith("Bearer ")) ? authHeader.substring(7) : null;
         String identityDocument = serverRequest.pathVariable("identityDocument");
         return userUseCase.findUserByIdentityDocument(identityDocument)
                 .flatMap(user -> ServerResponse.ok()
@@ -68,6 +72,18 @@ public class Handler {
                         .contentType(MediaType.APPLICATION_JSON)
                         .bodyValue(user))
                 .switchIfEmpty(ServerResponse.notFound().build());
+    }
+
+    public Mono<ServerResponse> listenValidateMatch(ServerRequest serverRequest) {
+        String authHeader = serverRequest.headers().firstHeader("Authorization");
+        String jwt = (authHeader != null && authHeader.startsWith("Bearer ")) ? authHeader.substring(7) : null;
+        String identityDocument = serverRequest.pathVariable("identityDocument");
+
+        return userUseCase.matchDocumentIdWithJwt(identityDocument, jwt)
+                .flatMap(match -> ServerResponse.ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .bodyValue(Map.of("match", match))
+                );
     }
 
 }

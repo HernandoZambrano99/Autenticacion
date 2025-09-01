@@ -74,6 +74,7 @@ public class RouterRest {
         return route(POST("/api/v1/usuarios"), userHandler::listenSaveUser)
                 .andRoute(GET("/api/v1/usuarios/{id}"), userHandler::listenFindById)
                 .andRoute(POST("/api/v1/login"), loginHandler::login)
-                .andRoute(GET("/api/v1/usuarios/find/{identityDocument}"), userHandler::listenFindByDocument);
+                .andRoute(GET("/api/v1/usuarios/find/{identityDocument}"), userHandler::listenFindByDocument)
+                .andRoute(GET("/api/v1/usuarios/validate/{identityDocument}"), userHandler::listenValidateMatch);
     }
 }
