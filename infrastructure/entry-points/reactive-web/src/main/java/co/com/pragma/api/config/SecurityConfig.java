@@ -1,6 +1,7 @@
 package co.com.pragma.api.config;
 
 import co.com.pragma.api.security.JwtUtil;
+import co.com.pragma.model.enums.RoleEnum;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import lombok.RequiredArgsConstructor;
@@ -37,11 +38,17 @@ public class SecurityConfig {
                 .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
                 .formLogin(ServerHttpSecurity.FormLoginSpec::disable)
                 .authorizeExchange(exchange -> exchange
+                        .pathMatchers("/v3/api-docs/**").permitAll()
+                        .pathMatchers("/swagger-ui.html").permitAll()
+                        .pathMatchers("/swagger-ui/**").permitAll()
+
                         .pathMatchers(HttpMethod.POST, "/api/v1/login").permitAll()
-                        .pathMatchers(HttpMethod.POST, "/api/v1/usuarios").hasAnyAuthority("ROLE_ADMIN","ROLE_ASESOR")
-                        .pathMatchers(HttpMethod.GET, "/api/v1/usuarios/validate/**").hasAuthority("ROLE_CLIENT")
-                        .pathMatchers(HttpMethod.GET, "/api/v1/usuarios/**").hasAnyAuthority("ROLE_ADMIN","ROLE_ASESOR","ROLE_CLIENT")
-                        .pathMatchers(HttpMethod.POST, "/api/v1/solicitudes").hasAuthority("ROLE_CLIENT")
+                        .pathMatchers(HttpMethod.POST, "/api/v1/usuarios").hasAnyAuthority(RoleEnum.ADMIN.getName(),RoleEnum.ASESOR.getName())
+                        .pathMatchers(HttpMethod.GET, "/api/v1/usuarios/validate/**").hasAuthority(RoleEnum.ASESOR.getName())
+                        .pathMatchers(HttpMethod.GET, "/api/v1/usuarios/**").hasAnyAuthority(
+                                RoleEnum.ADMIN.getName(),RoleEnum.ASESOR.getName(),RoleEnum.USER.getName()
+                        )
+                        .pathMatchers(HttpMethod.POST, "/api/v1/solicitudes").hasAuthority(RoleEnum.USER.getName())
                         .anyExchange().authenticated()
                 )
                 .addFilterAt(jwtAuthenticationFilter(), SecurityWebFiltersOrder.AUTHENTICATION);

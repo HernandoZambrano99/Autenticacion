@@ -5,7 +5,7 @@ import lombok.Getter;
 @Getter
 public enum RoleEnum {
     ADMIN(1L, "ROLE_ADMIN", "Administrador del sistema"),
-    CLIENT(2L, "ROLE_ASESOR", "Cliente del sistema"),
+    ASESOR(2L, "ROLE_ASESOR", "Cliente del sistema"),
     USER(3L, "ROLE_CLIENT", "Usuario estándar");
 
     private final Long id;
