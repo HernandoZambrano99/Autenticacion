@@ -43,7 +43,7 @@ public class SecurityConfig {
 
                         .pathMatchers(HttpMethod.POST, "/api/v1/login").permitAll()
                         .pathMatchers(HttpMethod.POST, "/api/v1/usuarios").hasAnyAuthority("ROLE_ADMIN","ROLE_ASESOR")
-                        .pathMatchers(HttpMethod.GET, "/api/v1/usuarios/validate/**").hasAuthority("ROLE_CLIENT")
+                        .pathMatchers(HttpMethod.GET, "/api/v1/usuarios/validate/**").hasAnyAuthority("ROLE_CLIENT", "ROLE_ASESOR")
                         .pathMatchers(HttpMethod.GET, "/api/v1/usuarios/**").hasAnyAuthority("ROLE_ADMIN","ROLE_ASESOR","ROLE_CLIENT")
                         .pathMatchers(HttpMethod.POST, "/api/v1/solicitudes").hasAuthority("ROLE_CLIENT")
                         .anyExchange().authenticated()
