@@ -76,7 +76,7 @@ BEGIN
     END IF;
 END$$;
 
--- Relación users-rol (si no existe constraint)
+-- Relación users-rol
 DO $$
 BEGIN
     IF NOT EXISTS (
@@ -100,7 +100,8 @@ END$$;
 INSERT INTO estados (nombre, descripcion) VALUES
 ('Pendiente de revisión', 'Solicitud creada, esperando validación'),
 ('Aprobado', 'Solicitud aprobada por el sistema'),
-('Rechazado', 'Solicitud rechazada')
+('Rechazado', 'Solicitud rechazada'),
+('Revision Manual', 'Solicitud que requiere revisión del asesor')
 ON CONFLICT DO NOTHING;
 
 -- Tipos de préstamo
@@ -147,7 +148,7 @@ SELECT
     'user@pragma.com',
     2000000.00,
     '22222222',
-    '$2a$12$D427YaeB8WOmJx7tq60r3Ohxh/jTpSW5RPF4jg5lsQV71qj2gJePq', -- misma contraseña hash
+    '$2a$12$D427YaeB8WOmJx7tq60r3Ohxh/jTpSW5RPF4jg5lsQV71qj2gJePq',
     (SELECT uniqueid FROM rol WHERE nombre='ROLE_CLIENT')
 WHERE NOT EXISTS (SELECT 1 FROM users WHERE email='user@pragma.com');
 
@@ -161,7 +162,7 @@ SELECT
     'user1@pragma.com',
     2000000.00,
     '33333333',
-    '$2a$12$D427YaeB8WOmJx7tq60r3Ohxh/jTpSW5RPF4jg5lsQV71qj2gJePq', -- misma contraseña hash
+    '$2a$12$D427YaeB8WOmJx7tq60r3Ohxh/jTpSW5RPF4jg5lsQV71qj2gJePq',
     (SELECT uniqueid FROM rol WHERE nombre='ROLE_CLIENT')
 WHERE NOT EXISTS (SELECT 1 FROM users WHERE email='user1@pragma.com');
 
@@ -175,7 +176,7 @@ SELECT
     'asesor@pragma.com',
     3000000.00,
     '44444444',
-    '$2a$12$D427YaeB8WOmJx7tq60r3Ohxh/jTpSW5RPF4jg5lsQV71qj2gJePq', -- misma contraseña hash
+    '$2a$12$D427YaeB8WOmJx7tq60r3Ohxh/jTpSW5RPF4jg5lsQV71qj2gJePq',
     (SELECT uniqueid FROM rol WHERE nombre='ROLE_ASESOR')
 WHERE NOT EXISTS (SELECT 1 FROM users WHERE email='asesor@pragma.com');
 

@@ -8,6 +8,8 @@ services:
       POSTGRES_DB: credi_ya
       POSTGRES_USER: credi_user
       POSTGRES_PASSWORD: user
+    ports:
+      - "5433:5432"
     volumes:
       - db_data:/var/lib/postgresql/data
       - ./db/init:/docker-entrypoint-initdb.d
@@ -15,7 +17,7 @@ services:
       - backend
 
   autenticacion:
-    image: autenticacion:latest   # la imagen construida
+    image: autenticacion:latest
     ports:
       - "8080:8080"
     environment:
@@ -31,6 +33,29 @@ services:
       SPRING_SECURITY_JWT_EXPIRATION_MS: 3600000
     depends_on:
       - postgres
+    networks:
+      - backend
+
+  solicitudes:
+    image: solicitudes:latest
+    ports:
+      - "8081:8081"
+    depends_on:
+      - postgres
+      - autenticacion
+    environment:
+      SERVER_PORT: 8081
+      SPRING_APP_NAME: Solicitudes
+      R2DBC_HOST: postgres
+      R2DBC_PORT: 5432
+      R2DBC_DATABASE: credi_ya
+      R2DBC_SCHEMA: public
+      R2DBC_USERNAME: credi_user
+      R2DBC_PASSWORD: user
+      CORS_ALLOWED_ORIGINS: http://localhost:4200,http://localhost:8080
+      SPRING_SECURITY_JWT_SECRET: 0Dz2RFrDttxXG9ZgQ9s6nJ8lcnFv9HQ1mFtuG3B0TXQ=
+      SPRING_SECURITY_JWT_EXPIRATION_MS: 3600000
+      RESTCONSUMER_URL: http://autenticacion:8080
     networks:
       - backend
 
