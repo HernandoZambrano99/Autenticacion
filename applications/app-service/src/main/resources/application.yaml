@@ -1,8 +1,9 @@
 server:
-  port: 8080
+  port: ${SERVER_PORT:8082}
+
 spring:
   application:
-    name: "Autenticacion"
+    name: ${SPRING_APP_NAME:Autenticacion}
   devtools:
     add-properties: false
   h2:
@@ -10,15 +11,17 @@ spring:
       enabled: true
       path: "/h2"
   profiles:
-    include: null
+    include: ${SPRING_PROFILES_INCLUDE:}
+
 adapters:
   r2dbc:
-    host: "localhost"
-    port: 5432
-    database: "credi_ya"
-    schema: "public"
-    username: "credi_user"
-    password: "user"
+    host: ${R2DBC_HOST:localhost}
+    port: ${R2DBC_PORT:5432}
+    database: ${R2DBC_DATABASE:credi_ya}
+    schema: ${R2DBC_SCHEMA:public}
+    username: ${R2DBC_USERNAME:credi_user}
+    password: ${R2DBC_PASSWORD:user}
+
 management:
   endpoints:
     web:
@@ -28,9 +31,11 @@ management:
     health:
       probes:
         enabled: true
+
 cors:
-  allowed-origins: "http://localhost:4200,http://localhost:8080"
+  allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:4200,http://localhost:8080}
+
 security:
   jwt:
-    secret: "0Dz2RFrDttxXG9ZgQ9s6nJ8lcnFv9HQ1mFtuG3B0TXQ="
-    expiration-ms: 3600000  # 1 hora
+    secret: ${SPRING_SECURITY_JWT_SECRET:0Dz2RFrDttxXG9ZgQ9s6nJ8lcnFv9HQ1mFtuG3B0TXQ=}
+    expiration-ms: ${SPRING_SECURITY_JWT_EXPIRATION_MS:3600000} # 1 hora

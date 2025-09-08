@@ -137,5 +137,48 @@ SELECT
     (SELECT uniqueid FROM rol WHERE nombre='ROLE_ADMIN')
 WHERE NOT EXISTS (SELECT 1 FROM users WHERE email='admin@pragma.com');
 
+-- Usuario user por defecto
+INSERT INTO users (name, last_name, birthday, address, phone, email, salary, identity_document, password, id_rol)
+SELECT
+    'User', 'Pragma',
+    '1990-01-01 00:00:00',
+    'Calle Falsa 123',
+    312345678,
+    'user@pragma.com',
+    2000000.00,
+    '22222222',
+    '$2a$12$D427YaeB8WOmJx7tq60r3Ohxh/jTpSW5RPF4jg5lsQV71qj2gJePq', -- misma contraseña hash
+    (SELECT uniqueid FROM rol WHERE nombre='ROLE_CLIENT')
+WHERE NOT EXISTS (SELECT 1 FROM users WHERE email='user@pragma.com');
+
+-- Usuario user1 por defecto
+INSERT INTO users (name, last_name, birthday, address, phone, email, salary, identity_document, password, id_rol)
+SELECT
+    'User1', 'Pragma',
+    '1992-01-01 00:00:00',
+    'Calle Falsa 123',
+    312345678,
+    'user1@pragma.com',
+    2000000.00,
+    '33333333',
+    '$2a$12$D427YaeB8WOmJx7tq60r3Ohxh/jTpSW5RPF4jg5lsQV71qj2gJePq', -- misma contraseña hash
+    (SELECT uniqueid FROM rol WHERE nombre='ROLE_CLIENT')
+WHERE NOT EXISTS (SELECT 1 FROM users WHERE email='user1@pragma.com');
+
+-- Usuario asesor por defecto
+INSERT INTO users (name, last_name, birthday, address, phone, email, salary, identity_document, password, id_rol)
+SELECT
+    'Asesor', 'Pragma',
+    '1988-01-01 00:00:00',
+    'Calle Falsa 123',
+    312345678,
+    'asesor@pragma.com',
+    3000000.00,
+    '44444444',
+    '$2a$12$D427YaeB8WOmJx7tq60r3Ohxh/jTpSW5RPF4jg5lsQV71qj2gJePq', -- misma contraseña hash
+    (SELECT uniqueid FROM rol WHERE nombre='ROLE_ASESOR')
+WHERE NOT EXISTS (SELECT 1 FROM users WHERE email='asesor@pragma.com');
+
+
 -- Ajustar permisos sobre secuencia de solicitud
 GRANT USAGE, SELECT, UPDATE ON SEQUENCE solicitud_id_solicitud_seq TO credi_user;
