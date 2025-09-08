@@ -1,17 +1,13 @@
 #!/usr/bin/env bash
-
 set -e
 
 echo "Construyendo imágenes Docker para microservicios..."
 
-# Construye Autenticacion
-docker build -t autenticacion:latest ./autenticacion
-
-# Construye Solicitudes
-docker build -t solicitudes:latest ./solicitudes
+# Construye Autenticacion (ruta un nivel arriba)
+docker build -t autenticacion:latest -f Dockerfile ..
 
 echo "Levantando contenedores con docker-compose..."
-docker-compose up -d
+docker-compose -f docker-compose.yml up -d
 
 echo "Contenedores levantados:"
 docker-compose ps
