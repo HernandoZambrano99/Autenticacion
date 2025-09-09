@@ -3,10 +3,10 @@ set -e
 
 echo "Construyendo imágenes Docker para microservicios..."
 
-# Construye Autenticacion (ruta un nivel arriba)
+# Construye Autenticacion
 docker build -t autenticacion:latest -f Dockerfile ..
 
-# Construye Solicitudes (contexto en la carpeta raíz de solicitudes)
+# Construye Solicitudes
 docker build \
   -t solicitudes:latest \
   -f ../../solicitudes/deployment/Dockerfile \
