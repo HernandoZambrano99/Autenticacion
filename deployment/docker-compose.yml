@@ -56,6 +56,9 @@ services:
       SPRING_SECURITY_JWT_SECRET: 0Dz2RFrDttxXG9ZgQ9s6nJ8lcnFv9HQ1mFtuG3B0TXQ=
       SPRING_SECURITY_JWT_EXPIRATION_MS: 3600000
       RESTCONSUMER_URL: http://autenticacion:8080
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_REGION: us-east-1
     networks:
       - backend
 

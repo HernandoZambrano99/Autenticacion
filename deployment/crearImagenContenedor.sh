@@ -2,6 +2,7 @@
 set -e
 
 echo "Construyendo imágenes Docker para microservicios..."
+# Exportar credenciales AWS antes del compose
 
 # Construye Autenticacion
 docker build -t autenticacion:latest -f Dockerfile ..
@@ -17,3 +18,4 @@ docker-compose -f docker-compose.yml up -d
 
 echo "Contenedores levantados:"
 docker-compose ps
+
