@@ -59,6 +59,31 @@ services:
       AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
       AWS_REGION: us-east-1
+      SQS_CALCULATOR: ${SQS_CALCULATOR}
+      SQS_NOTIFICATION: ${SQS_NOTIFICATION}
+      SQS_SOLICITUD: ${SQS_SOLICITUD}
+      SQS_LISTENER: ${SQS_LISTENER}
+    networks:
+      - backend
+
+  reportes:
+    image: reportes:latest
+    ports:
+      - "8085:8085"
+    depends_on:
+      - solicitudes
+      - autenticacion
+    environment:
+      SERVER_PORT: 8085
+      SPRING_APP_NAME: Reportes
+      AWS_REGION: us-east-1
+      CORS_ALLOWED_ORIGINS: http://localhost:4200,http://localhost:8080
+      SPRING_SECURITY_JWT_SECRET: 0Dz2RFrDttxXG9ZgQ9s6nJ8lcnFv9HQ1mFtuG3B0TXQ=
+      SPRING_SECURITY_JWT_EXPIRATION_MS: 3600000
+      RESTCONSUMER_URL: http://autenticacion:8080
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      SQS_LISTENER_APROBADA: ${SQS_LISTENER_APROBADA}
     networks:
       - backend
 

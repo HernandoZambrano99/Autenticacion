@@ -152,6 +152,20 @@ SELECT
     (SELECT uniqueid FROM rol WHERE nombre='ROLE_CLIENT')
 WHERE NOT EXISTS (SELECT 1 FROM users WHERE email='user@pragma.com');
 
+-- Usuario hernando
+INSERT INTO users (name, last_name, birthday, address, phone, email, salary, identity_document, password, id_rol)
+SELECT
+    'Hernando Pruebas', 'Cliente',
+    '1992-01-01 00:00:00',
+    'Calle Falsa 123',
+    312345678,
+    'hernandozambrano556@gmail.com',
+    5000000.00,
+    '1234567890',
+    '$2a$12$D427YaeB8WOmJx7tq60r3Ohxh/jTpSW5RPF4jg5lsQV71qj2gJePq',
+    (SELECT uniqueid FROM rol WHERE nombre='ROLE_CLIENT')
+WHERE NOT EXISTS (SELECT 1 FROM users WHERE email='hernandozambrano556@gmail.com');
+
 -- Usuario user1 por defecto
 INSERT INTO users (name, last_name, birthday, address, phone, email, salary, identity_document, password, id_rol)
 SELECT
