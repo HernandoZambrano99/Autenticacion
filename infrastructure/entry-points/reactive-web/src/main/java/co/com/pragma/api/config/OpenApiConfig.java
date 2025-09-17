@@ -12,8 +12,8 @@ public class OpenApiConfig {
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("User API")
-                        .version("1.0")
-                        .description("Documentación de los endpoints de usuarios"));
+                    .title("Autenticacion API")
+                    .version("1.0")
+                    .description("Documentación de los endpoints de autenticacion"));
     }
 }
